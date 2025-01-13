@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div class="w-64 bg-white shadow-md">
+            <div class="p-4">
+                <h2 class="text-lg font-semibold text-gray-700 mb-4">Allowed Folders</h2>
+                <ul class="space-y-2">
+                    <% config.fileManager.allowedFolders.forEach(folder => { %>
+                        <li>
+                            <a href="/?path=<%= encodeURIComponent(folder.path) %>" class="flex items-center p-2 text-gray-600 rounded hover:bg-gray-100 <%= currentPath === folder.path ? 'bg-blue-50 text-blue-600' : '' %>">
+                                <i class="fas fa-folder text-yellow-500 mr-2"></i>
+                                <%= folder.name %>
+                            </a>
+                        </li>
+                        <% }); %>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <div class="p-8">
+                <% if (!currentPath) { %>
+                    <!-- Root View - Show all allowed folders -->
+                    <h1 class="text-2xl font-bold mb-6 text-gray-800">Welcome to File Manager</h1>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <% config.fileManager.allowedFolders.forEach(folder => { %>
+                            <a href="/?path=<%= encodeURIComponent(folder.path) %>" class="block p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow">
+                                <div class="flex items-center">
+                                    <i class="fas fa-folder text-yellow-500 text-3xl mr-4"></i>
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-gray-700">
+                                            <%= folder.name %>
+                                        </h3>
+                                        <p class="text-sm text-gray-500">
+                                            <%= folder.description %>
+                                        </p>
+                                        <p class="text-xs text-gray-400 mt-1">
+                                            <%= folder.path %>
+                                        </p>
+                                    </div>
+                                </div>
+                            </a>
+                            <% }); %>
+                    </div>
+                    <% } else { %>
+                        <!-- Folder View -->
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <!-- Path Navigation -->
+                            <div class="mb-6 flex items-center space-x-2 text-sm text-gray-600 overflow-x-auto">
+                                <span class="font-medium">Current Path:</span>
+                                <span class="text-blue-600"><%= currentPath %></span>
+                            </div>
+
+                            <!-- Actions Bar -->
+                            <div class="mb-6 flex justify-between items-center">
+                                <!-- New Folder Form -->
+                                <form action="/create-folder" method="post" class="flex space-x-2">
+                                    <input type="hidden" name="currentPath" value="<%= currentPath %>">
+                                    <input type="text" name="folderName" placeholder="New Folder Name" required class="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition-colors text-sm">
+                                    <i class="fas fa-folder-plus mr-2"></i>Create Folder
+                                </button>
+                                </form>
+
+                                <!-- Upload Form -->
+                                <form action="/upload" method="post" enctype="multipart/form-data" class="flex space-x-2">
+                                    <input type="hidden" name="currentPath" value="<%= currentPath %>">
+                                    <input type="file" name="file" required class="text-sm text-gray-500
+                                    file:mr-4 file:py-2 file:px-4
+                                    file:rounded-full file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-blue-50 file:text-blue-700
+                                    hover:file:bg-blue-100">
+                                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-colors text-sm">
+                                    <i class="fas fa-upload mr-2"></i>Upload
+                                </button>
+                                </form>
+                            </div>
+
+                            <!-- Files and Folders List -->
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full table-auto">
+                                    <thead>
+                                        <tr class="bg-gray-50">
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Modified</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        <% items.forEach(item => { %>
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                                    <% if (item.isDirectory) { %>
+                                                        <a href="/?path=<%= item.path %>" class="flex items-center text-blue-600 hover:text-blue-900">
+                                                            <i class="fas fa-folder text-yellow-500 mr-2"></i>
+                                                            <%= item.name %>
+                                                        </a>
+                                                        <% } else { %>
+                                                            <span class="flex items-center text-gray-900">
+                                                        <i class="fas fa-file text-gray-500 mr-2"></i>
+                                                        <%= item.name %>
+                                                    </span>
+                                                            <% } %>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    <%= item.isDirectory ? 'Folder' : 'File' %>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    <%= item.isDirectory ? '-' : item.sizeFormatted %>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    <%= item.modified.toLocaleString() %>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                                                    <% if (!item.isDirectory && item.name !== '..') { %>
+                                                        <% if (item.type !== 'other') { %>
+                                                            <a href="/preview/<%= item.path %>" class="text-green-600 hover:text-green-900">
+                                                                <i class="fas fa-eye mr-1"></i>Preview
+                                                            </a>
+                                                            <% } %>
+                                                                <a href="/download/<%= item.path %>" class="text-blue-600 hover:text-blue-900">
+                                                                    <i class="fas fa-download mr-1"></i>Download
+                                                                </a>
+                                                                <% } %>
+                                                                    <% if (item.name !== '..') { %>
+                                                                        <form action="/delete/<%= item.path %>" method="post" class="inline">
+                                                                            <button type="submit" class="text-red-600 hover:text-red-900 ml-2" onclick="return confirm('Are you sure you want to delete this <%= item.isDirectory ? 'folder' : 'file' %>?')">
+                                                            <i class="fas fa-trash mr-1"></i>Delete
+                                                        </button>
+                                                                        </form>
+                                                                        <% } %>
+                                                </td>
+                                            </tr>
+                                            <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <% } %>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

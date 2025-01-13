@@ -1,0 +1,50 @@
+# Server Configuration
+server:
+  port: 3333
+  host: "localhost"
+
+# File Manager Configuration
+fileManager:
+  # List of allowed folders to manage
+  allowedFolders:
+    - name: "Test Folder"
+      path: "./test folder"
+      description: "Local test folder"
+    
+    - name: "Rive Animations"
+      path: "/home/prince/projects/kadmap/animations/public/riv"
+      description: "KadMap Rive Animations folder"
+  
+  # File type configurations
+  fileTypes:
+    text:
+      - ".txt"
+      - ".log"
+      - ".csv"
+    
+    code:
+      - ".js"
+      - ".ts"
+      - ".py"
+      - ".html"
+      - ".css"
+      - ".json"
+      - ".md"
+      - ".jsx"
+      - ".tsx"
+      - ".cpp"
+      - ".c"
+      - ".java"
+      - ".php"
+      - ".rb"
+    
+    image:
+      - ".jpg"
+      - ".jpeg"
+      - ".png"
+      - ".gif"
+      - ".svg"
+      - ".webp"
+    
+    pdf:
+      - ".pdf" 
