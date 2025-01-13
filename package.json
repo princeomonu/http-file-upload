@@ -1,12 +1,30 @@
 {
-    "name": "http-file-upload",
+    "name": "filevault",
     "version": "1.0.0",
+    "description": "A modern, secure, and user-friendly file management system built with Express and TypeScript",
     "main": "src/server.ts",
     "license": "MIT",
+    "author": {
+        "name": "Your Name"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/yourusername/filevault.git"
+    },
+    "keywords": [
+        "file-manager",
+        "express",
+        "typescript",
+        "file-upload",
+        "file-preview",
+        "web-interface"
+    ],
     "scripts": {
         "start": "ts-node src/server.ts",
         "dev": "nodemon --exec ts-node src/server.ts",
-        "build": "tsc"
+        "build": "tsc",
+        "lint": "eslint . --ext .ts",
+        "format": "prettier --write \"src/**/*.ts\""
     },
     "dependencies": {
         "@types/bytes": "^3.1.5",
