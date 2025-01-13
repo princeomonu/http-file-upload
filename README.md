@@ -1,6 +1,7 @@
 # FileVault 📁
 
-A modern, secure, and user-friendly file management system built with Express and TypeScript.
+A simple # FileVault 📁
+file management app built with Express and TypeScript.
 
 ## Features ✨
 
